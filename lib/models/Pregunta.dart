@@ -23,3 +23,31 @@ class Pregunta {
   }
 
 }
+
+class PreguntesList {
+  List<Pregunta> preguntes;
+
+  PreguntesList({this.preguntes,});
+
+  List<Pregunta> getPreguntes(){
+    List<Pregunta> results = [];
+
+    preguntes.map((e){
+      results.add(e);
+    }).toList();
+
+    return results;
+  }
+
+  factory PreguntesList.fromJson(List<dynamic> json){
+
+    List<Pregunta> preguntes = [];
+    preguntes = json.map((i)=>Pregunta.fromJson(i)).toList();
+
+    return new PreguntesList(
+      preguntes: preguntes,
+    );
+
+  }
+
+}
