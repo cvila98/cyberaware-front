@@ -1,10 +1,12 @@
+import 'Resposta.dart';
+
 class Pregunta {
   int _id;
   String _enunciat;
   String _selectedOption;
-  List<String> _options;
+  List<Resposta> _options;
 
-  Pregunta({int id, String enunciat, List<String> options}){
+  Pregunta({int id, String enunciat, List<Resposta> options}){
     this._id = id;
     this._enunciat = enunciat;
     this._options = options;
@@ -12,13 +14,16 @@ class Pregunta {
 
   int get id => _id;
   String get enunciat => _enunciat;
-  List<String> get options => _options;
+  List<Resposta> get options => _options;
 
   factory Pregunta.fromJson(Map<String, dynamic> json) {
+
+    List<Resposta> respostes = json['respostes'].map((i)=>Resposta.fromJson(i)).toList();
+
     return Pregunta(
       id: json['id'],
       enunciat: json['enunciat'],
-      options: json['options'],
+      options: respostes,
     );
   }
 

@@ -6,20 +6,25 @@ class Formacio{
   String _descripcio;
   List<Pregunta> _preguntes;
 
-  Formacio({int id, String name, String descripcio, List<Pregunta> preguntes}){
+  Formacio({int id, String name, String descripcio}){
     this._id = id;
     this._name = name;
     this._descripcio = descripcio;
-    this._preguntes = preguntes;
+    this._preguntes = [];
   }
 
+  int get id => _id;
+  String get name => _name;
+  String get descripcio => _descripcio;
+
+  set preguntes(List<Pregunta> preguntes) => _preguntes = preguntes;
+
   factory Formacio.fromJson(Map<String, dynamic> json) {
-    PreguntesList preguntes = PreguntesList.fromJson(json['preguntes']);
+
     return Formacio(
       id: json['id'],
-      name: json['name'],
-      descripcio: json['descripcio'],
-      preguntes: preguntes.getPreguntes(),
+      name: json['nom'],
+      descripcio: json['descripcio']
     );
   }
 
