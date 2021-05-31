@@ -22,6 +22,7 @@ class Usuari {
   String get name => _name;
   bool get is_admin=> _if_admin;
   String get empresa => _empresa;
+  String get token => _token;
 
   set username(String username) => _username = username;
   set email(String email) => _email = email;

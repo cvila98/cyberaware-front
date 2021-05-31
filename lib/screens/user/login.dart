@@ -188,8 +188,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
   }
 
   Future<void> login(String email, String password) async{
-    print('entro al login');
-    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/login/"),
+    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/authentication/login/"),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -199,7 +198,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
     _responseCode = response.statusCode;
     var data = jsonDecode(response.body);
     user = Usuari.fromJson(data['user']);
-    user.token = data['acces_token'];
+    user.token = data['access_token'];
+    print(user.token);
     print(user.email);
   }
 

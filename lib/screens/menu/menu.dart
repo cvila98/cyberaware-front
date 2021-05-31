@@ -1,10 +1,12 @@
 import 'package:cyberaware/models/Usuari.dart';
+import 'package:cyberaware/screens/formacions/formacions.dart';
 import 'package:cyberaware/screens/user/login.dart';
 import 'package:cyberaware/screens/user/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cyberaware/screens/home.dart';
+
 
 class Menu extends StatefulWidget {
   Menu(this.user);
@@ -34,6 +36,14 @@ class _MenuContent extends State<Menu> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => Profile(widget.user))
+
+    );
+  }
+
+  nFormacions() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Formacions(widget.user))
 
     );
   }
@@ -88,11 +98,18 @@ class _MenuContent extends State<Menu> {
             onTap: () => nProfile(),
           ),
           ListTile(
+            leading: Icon(Icons.view_list_outlined),
+            title: Text(
+                'Formacions'),
+            onTap: () => nFormacions(),
+          ),
+          ListTile(
             leading: Icon(Icons.exit_to_app, color: Colors.redAccent),
             title: Text('Logout',
                 style: TextStyle(color: Colors.redAccent)),
             onTap: () => nLogIn(),
           ),
+
         ],
       ),
     );

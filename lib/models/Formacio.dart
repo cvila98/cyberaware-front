@@ -16,11 +16,11 @@ class Formacio{
   int get id => _id;
   String get name => _name;
   String get descripcio => _descripcio;
+  List<Pregunta> get preguntes => _preguntes;
 
   set preguntes(List<Pregunta> preguntes) => _preguntes = preguntes;
 
   factory Formacio.fromJson(Map<String, dynamic> json) {
-
     return Formacio(
       id: json['id'],
       name: json['nom'],
