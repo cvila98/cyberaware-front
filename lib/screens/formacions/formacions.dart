@@ -1,5 +1,6 @@
 import 'package:cyberaware/models/Usuari.dart';
 import 'package:cyberaware/models/Formacio.dart';
+import 'package:cyberaware/screens/formacions/question.dart';
 import 'package:cyberaware/screens/menu/menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -70,8 +71,6 @@ class _FormacionsState extends State<Formacions> {
   }
 
   Widget buildFormacions() {
-    print('entro al build');
-    print(_formacions);
     return Container(
       height: 600,
       child: GridView(
@@ -83,7 +82,7 @@ class _FormacionsState extends State<Formacions> {
           crossAxisCount: 1,
         ),
         children: _formacions
-            .map((formacio) => FormacioWidget(formacio))
+            .map((formacio) => FormacioWidget(formacio, widget.user))
             .toList(),
       ),
     );
@@ -91,14 +90,13 @@ class _FormacionsState extends State<Formacions> {
   }
 
   Future<void> get_formacions() async{
-    print(widget.user.token);
     http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/formacions/formacions_user"),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         'Authorization': "Token "+widget.user.token,
       },);
     _responseCode = response.statusCode;
-    var data = jsonDecode(response.body);
+    var data = jsonDecode(utf8.decode(response.bodyBytes));
     List<dynamic> formacions = data['formacions'].map((i)=>Formacio.fromJson(i)).toList();
     _formacions=formacions;
   }
@@ -107,16 +105,16 @@ class _FormacionsState extends State<Formacions> {
 }
 
 class FormacioWidget extends StatelessWidget{
-  FormacioWidget(this.formacio);
+  FormacioWidget(this.formacio, this.user);
   Formacio formacio;
+  Usuari user;
 
   @override
   Widget build(BuildContext context) {
-    print('entro al build de formacio');
     return GestureDetector(
-      onTap: (){
-        print(formacio.name);
-      },
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => QuestionWidget(formacio, user),
+      )),
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(

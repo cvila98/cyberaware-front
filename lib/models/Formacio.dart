@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'Pregunta.dart';
 
 class Formacio{

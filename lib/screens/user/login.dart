@@ -190,7 +190,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
   Future<void> login(String email, String password) async{
     http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/authentication/login/"),
         headers: <String, String>{
-          'Content-Type': 'application/json',
+          HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
           'email': email,

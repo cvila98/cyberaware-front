@@ -16,14 +16,13 @@ class Pregunta {
   String get enunciat => _enunciat;
   List<Resposta> get options => _options;
 
-  factory Pregunta.fromJson(Map<String, dynamic> json) {
+  set options(List<Resposta> respostes) => _options = respostes;
 
-    List<Resposta> respostes = json['respostes'].map((i)=>Resposta.fromJson(i)).toList();
+  factory Pregunta.fromJson(Map<String, dynamic> json) {
 
     return Pregunta(
       id: json['id'],
       enunciat: json['enunciat'],
-      options: respostes,
     );
   }
 
@@ -45,6 +44,8 @@ class PreguntesList {
   }
 
   factory PreguntesList.fromJson(List<dynamic> json){
+
+
 
     List<Pregunta> preguntes = [];
     preguntes = json.map((i)=>Pregunta.fromJson(i)).toList();
