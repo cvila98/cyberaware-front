@@ -121,6 +121,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
                 child: Column(
                   children: [
                     buildAnswer(pregunta.options[index]),
+                    buildSolution(_selectedResposta, pregunta.options[index])
                   ],
                 ),
               ),
