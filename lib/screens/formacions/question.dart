@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:scroll_to_index/scroll_to_index.dart';
+
 import 'package:cyberaware/models/Formacio.dart';
 import 'package:cyberaware/models/Pregunta.dart';
 import 'package:cyberaware/models/Resposta.dart';
@@ -26,14 +28,18 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   var _responseCode;
   String _hint = "";
   bool _isCorrect = false;
+  List<int> _correctAnwer = [];
   Resposta _selectedResposta;
+  List<Resposta> array_respostes;
   int _selectedPregunta;
   Future<void> _have_preguntes;
+  bool _hasRespond = false;
 
   List<dynamic> _preguntes = [];
 
   PageController _controller;
   int _pageIndex;
+
 
   @override
   void initState() {
@@ -41,7 +47,11 @@ class _QuestionWidgetState extends State<QuestionWidget>{
     _controller = PageController(initialPage: 0, keepPage: false);
     _isCorrect = false;
     _selectedResposta = new Resposta(id: 20000, text: 'resposta prova');
-    _have_preguntes = get_preguntes(widget.formacio.id);
+    _have_preguntes = get_preguntes(widget.formacio.id).whenComplete((){
+      _correctAnwer = new List.filled(_preguntes.length, 0);
+      array_respostes = new List.filled(_preguntes.length, _selectedResposta);
+      print(array_respostes);
+    });
     _selectedPregunta = 0;
   }
 
@@ -112,7 +122,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
               itemBuilder: (context, index){
                 final question = _preguntes[index];
 
-                return buildPregunta(pregunta: question);
+                return buildPregunta(pregunta: question, index_pregunta: index);
               },
             ),
           );
@@ -120,9 +130,9 @@ class _QuestionWidgetState extends State<QuestionWidget>{
     );
   }
 
-  Widget buildPregunta({Pregunta pregunta}) {
+  Widget buildPregunta({Pregunta pregunta, int index_pregunta}) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +140,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
               SizedBox(height: 15 ),
               Text(
                 pregunta.enunciat,
-                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10,),
               Text(
@@ -139,8 +149,19 @@ class _QuestionWidgetState extends State<QuestionWidget>{
               ),
               SizedBox(height: 10,),
               Expanded(
-                child: buildOptions(pregunta: pregunta),
-              )
+                child: buildOptions(pregunta: pregunta, index_pregunta: index_pregunta),
+              ),
+              (_correctAnwer[index_pregunta]!=0) ? Container(
+                height: 90,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 40,
+                  width: 200,
+                  child: ElevatedButton(
+                      child: Icon(Icons.arrow_forward)
+                  ),
+                )
+              ) : Container()
             ]
 
         ),
@@ -169,7 +190,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
     _preguntes= preguntes;
   }
 
-  Widget buildOptions({Pregunta pregunta}) {
+  Widget buildOptions({Pregunta pregunta, int index_pregunta}) {
     return ListView.separated(
         separatorBuilder: (BuildContext context, int index) {
           return SizedBox(height: 10);
@@ -178,19 +199,31 @@ class _QuestionWidgetState extends State<QuestionWidget>{
         itemBuilder: (context, index){
           return TextButton(
               onPressed: () {
-                check_resposta(pregunta.options[index].id, pregunta.id).whenComplete(() {
-                  setState(() {
-                    _selectedResposta = pregunta.options[index];
+                if (_correctAnwer[index_pregunta]==0){
+                  check_resposta(pregunta.options[index].id, pregunta.id).whenComplete(() {
+                    get_correcta(pregunta.id, index_pregunta).whenComplete((){
+                      setState(() {
+                        _selectedResposta = pregunta.options[index];
+                        array_respostes[index_pregunta] = _selectedResposta;
+                      });
+                    });
                   });
-                });
+                }
               },
               child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: getColorOption(pregunta.options[index]),
+                  color: (_correctAnwer[index_pregunta]==pregunta.options[index].id) ? Colors.green : getColorOption(pregunta.options[index], index_pregunta),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Column(
+                child: (_correctAnwer[index_pregunta] == pregunta.options[index].id) ?
+                Column(
+                  children: [
+                    buildAnswer(pregunta.options[index]),
+                    buildSolution(pregunta.options[index], pregunta.options[index])
+                  ],
+                ):
+                Column(
                   children: [
                     buildAnswer(pregunta.options[index]),
                     buildSolution(_selectedResposta, pregunta.options[index])
@@ -209,17 +242,17 @@ class _QuestionWidgetState extends State<QuestionWidget>{
       child: Container(child:
         Text(
           option.text,
-          style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
         )
       ),
     );
   }
 
-  Color getColorOption(Resposta resposta){
+  Color getColorOption(Resposta resposta, int index_pregunta){
     bool isSelected = (_selectedResposta.text == resposta.text);
-
-    if(isSelected){
-      if(_isCorrect){
+    bool isPressed = (array_respostes[index_pregunta].id == resposta.id);
+    if(isSelected || isPressed){
+      if(_correctAnwer[index_pregunta] == resposta.id){
         return Colors.green;
       }else{
         return Colors.red;
@@ -265,9 +298,24 @@ class _QuestionWidgetState extends State<QuestionWidget>{
     _isCorrect = data['is_correct'];
   }
 
+  Future<void> get_correcta(int id_pregunta, int index) async{
+    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/formacions/pregunta/"+id_pregunta.toString()+"/get_correcta"),
+      headers: <String, String>{
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+        'Authorization': "Token "+widget.user.token.toString(),
+      },);
+    _responseCode = response.statusCode;
+    var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+    _correctAnwer[index] = data['resposta_correcta'];
+
+  }
+
+
   void onTapPage(int index) {
     _controller.jumpToPage(index);
 
   }
 
 }
+
