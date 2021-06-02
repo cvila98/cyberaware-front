@@ -25,7 +25,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   var _responseCode;
   String _hint = "";
-  bool _isCorrect;
+  bool _isCorrect = false;
   Resposta _selectedResposta;
   Future<void> _have_preguntes;
 
@@ -33,6 +33,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   @override
   void initState() {
+    _isCorrect = false;
     _selectedResposta = new Resposta(id: 20000, text: 'resposta prova');
     _have_preguntes = get_preguntes(widget.formacio.id);
   }
@@ -107,15 +108,16 @@ class _QuestionWidgetState extends State<QuestionWidget>{
         itemBuilder: (context, index){
           return TextButton(
               onPressed: () {
-                setState(() {
-                  _selectedResposta = pregunta.options[index];
-                  print(_selectedResposta.text);
+                check_resposta(pregunta.options[index].id, pregunta.id).whenComplete(() {
+                  setState(() {
+                    _selectedResposta = pregunta.options[index];
+                  });
                 });
               },
               child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: (_selectedResposta.text == pregunta.options[index].text ? Colors.green : Colors.grey),
+                  color: getColorOption(pregunta.options[index]),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -133,19 +135,29 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   Widget buildAnswer(Resposta option){
     return Container(
-      height: 30,
-      child: Row(children: [
-        Text(
-          option.id.toString(),
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-        ),
-        SizedBox(width: 12),
+
+      child: Container(child:
         Text(
           option.text,
           style: TextStyle(fontSize: 20),
         )
-      ]),
+      ),
     );
+  }
+
+  Color getColorOption(Resposta resposta){
+    bool isSelected = (_selectedResposta.text == resposta.text);
+
+    if(isSelected){
+      if(_isCorrect){
+        return Colors.green;
+      }else{
+        return Colors.red;
+      }
+
+    }else{
+      return Colors.grey.shade200;
+    }
   }
 
   Widget buildSolution(Resposta solution, Resposta answer) {
