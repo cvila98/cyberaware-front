@@ -27,13 +27,20 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   String _hint = "";
   bool _isCorrect;
   Resposta _selectedResposta;
+  Future<void> _have_preguntes;
 
   List<dynamic> _preguntes = [];
 
   @override
+  void initState() {
+    _selectedResposta = new Resposta(id: 20000, text: 'resposta prova');
+    _have_preguntes = get_preguntes(widget.formacio.id);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
-        future: get_preguntes(widget.formacio.id),
+        future: _have_preguntes,
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           return Scaffold(
             body: PageView.builder(
@@ -51,7 +58,6 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   Widget buildPregunta({Pregunta pregunta}) {
     return Container(
-      color: Colors.white,
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -96,61 +102,37 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   }
 
   Widget buildOptions({Pregunta pregunta}) {
-    return ListView(
-      physics: BouncingScrollPhysics(),
-      children: pregunta.options.map((resposta) => buildOption(context, resposta, pregunta))
-          .toList(),
+    return ListView.builder(
+        itemCount: pregunta.options.length,
+        itemBuilder: (context, index){
+          return TextButton(
+              onPressed: () {
+                setState(() {
+                  _selectedResposta = pregunta.options[index];
+                  print(_selectedResposta.text);
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: (_selectedResposta.text == pregunta.options[index].text ? Colors.green : Colors.grey),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    buildAnswer(pregunta.options[index]),
+                  ],
+                ),
+              ),
+          );
+        }
     );
   }
 
-  Widget buildOption(BuildContext context, Resposta option, Pregunta question) {
-    final color = getColorForOption(option, question);
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedResposta = option;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            buildAnswer(option),
-            buildSolution(_selectedResposta, option),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Color getColorForOption(Resposta option, Pregunta question) {
-    bool isSelected = (option == _selectedResposta);
-    print(option.text);
-    print(_selectedResposta.text);
-
-    if (!isSelected) {
-      return Colors.grey.shade200;
-    } else {
-      check_resposta(option.id, question.id).whenComplete((){
-        if (_isCorrect == true){
-          return Colors.green;
-        }
-        else{
-          return Colors.red;
-        }
-      });
-    }
-
-  }
 
   Widget buildAnswer(Resposta option){
     return Container(
-      height: 50,
+      height: 30,
       child: Row(children: [
         Text(
           option.id.toString(),
