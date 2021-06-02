@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import 'formacions.dart';
+
 class QuestionWidget extends StatefulWidget{
   QuestionWidget(this.formacio, this.user);
   Formacio formacio;
@@ -53,6 +55,14 @@ class _QuestionWidgetState extends State<QuestionWidget>{
       print(array_respostes);
     });
     _selectedPregunta = 0;
+  }
+
+  nFormacions() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Formacions(widget.user))
+
+    );
   }
 
   @override
@@ -160,7 +170,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
                   child: ElevatedButton(
                     onPressed: (){
                       if (index_pregunta == _preguntes.length-1){
-                        print(_puntuacio);
+                        submit_resposta();
                         showDialog(context: context, builder: (context){
                           return AlertDialog(
                             title: Text('Has acabat la formació.',
@@ -177,6 +187,12 @@ class _QuestionWidgetState extends State<QuestionWidget>{
                                       Text(_puntuacio.toString(),
                                         style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.green.shade900),),
                                     ],
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: (){
+                                      nFormacions();
+                                    },
+                                    child: Text('LES MEVES FORMACIONS'),
                                   )
                                 ],
                               ),
@@ -343,6 +359,26 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
     _correctAnwer[index] = data['resposta_correcta'];
 
+  }
+
+  Future<void> submit_resposta() async {
+    DateTime datetime = DateTime.now();
+    DateTime date = DateTime(datetime.year, datetime.month, datetime.day);
+    print(date.toString().substring(0,10));
+    http.Response response = await http.post(new Uri.http("10.0.2.2:8000",
+        "/api/formacions/"+ widget.formacio.id.toString() + "/submit/"),
+      headers: <String, String>{
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+        'Authorization': "Token " + widget.user.token.toString(),
+      },
+      body: jsonEncode(<String, dynamic>{
+        'date': date.toString().substring(0,10),
+        'puntuacio':_puntuacio,
+        'max_puntuacio':_preguntes.length,
+      }),
+    );
+    print(response.body);
+    _responseCode = response.statusCode;
   }
 
 
