@@ -161,6 +161,28 @@ class _QuestionWidgetState extends State<QuestionWidget>{
                     onPressed: (){
                       if (index_pregunta == _preguntes.length-1){
                         print(_puntuacio);
+                        showDialog(context: context, builder: (context){
+                          return AlertDialog(
+                            title: Text('Has acabat la formació.',
+                            style: TextStyle(fontSize: 24),),
+                            content: Container(
+                              height: 150,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text('La teva puntuació ha estat: ',
+                                        style: TextStyle(fontSize: 16),),
+                                      SizedBox(height: 100, width: 20,),
+                                      Text(_puntuacio.toString(),
+                                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.green.shade900),),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          );
+                        });
                       }else{
                         onTapPage(index_pregunta+1);
                         setState(() {
