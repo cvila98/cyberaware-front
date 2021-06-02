@@ -31,8 +31,13 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   List<dynamic> _preguntes = [];
 
+  PageController _controller;
+  int _pageIndex;
+
   @override
   void initState() {
+    _pageIndex = 0;
+    _controller = PageController(initialPage: 0, keepPage: false);
     _isCorrect = false;
     _selectedResposta = new Resposta(id: 20000, text: 'resposta prova');
     _have_preguntes = get_preguntes(widget.formacio.id);
@@ -45,6 +50,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           return Scaffold(
             body: PageView.builder(
+              controller: _controller,
               itemCount: _preguntes.length,
               itemBuilder: (context, index){
                 final question = _preguntes[index];
@@ -59,26 +65,29 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   Widget buildPregunta({Pregunta pregunta}) {
     return Container(
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 32,),
-            Text(
-              pregunta.enunciat,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8,),
-            Text(
-              'Escull una sola opció.',
-              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-            ),
-            Expanded(
-              child: buildOptions(pregunta: pregunta),
-            )
-          ]
+      padding: EdgeInsets.all(20),
+      child: Container(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 32,),
+              Text(
+                pregunta.enunciat,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8,),
+              Text(
+                'Escull una sola opció.',
+                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+              ),
+              Expanded(
+                child: buildOptions(pregunta: pregunta),
+              )
+            ]
 
-      ),
+        ),
 
+      )
     );
   }
 
@@ -103,7 +112,10 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   }
 
   Widget buildOptions({Pregunta pregunta}) {
-    return ListView.builder(
+    return ListView.separated(
+        separatorBuilder: (BuildContext context, int index) {
+          return SizedBox(height: 10);
+        },
         itemCount: pregunta.options.length,
         itemBuilder: (context, index){
           return TextButton(
@@ -139,7 +151,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
       child: Container(child:
         Text(
           option.text,
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
         )
       ),
     );
@@ -162,9 +174,15 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   Widget buildSolution(Resposta solution, Resposta answer) {
     if (solution == answer) {
-      return Text(
-        _hint,
-        style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+      return Column(
+        children: [
+          SizedBox(height: 10,),
+          Text(
+            _hint,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: Colors.black),
+          ),
+        ],
       );
     } else {
       return Container();
@@ -187,6 +205,11 @@ class _QuestionWidgetState extends State<QuestionWidget>{
     var data = jsonDecode(utf8.decode(response.bodyBytes));
     _hint = data['hint'];
     _isCorrect = data['is_correct'];
+  }
+
+  void onTapPage(int index) {
+    _controller.jumpToPage(index);
+
   }
 
 }
