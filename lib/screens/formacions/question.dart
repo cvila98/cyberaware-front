@@ -27,6 +27,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   String _hint = "";
   bool _isCorrect = false;
   Resposta _selectedResposta;
+  int _selectedPregunta;
   Future<void> _have_preguntes;
 
   List<dynamic> _preguntes = [];
@@ -41,6 +42,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
     _isCorrect = false;
     _selectedResposta = new Resposta(id: 20000, text: 'resposta prova');
     _have_preguntes = get_preguntes(widget.formacio.id);
+    _selectedPregunta = 0;
   }
 
   @override
@@ -49,7 +51,62 @@ class _QuestionWidgetState extends State<QuestionWidget>{
         future: _have_preguntes,
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                widget.formacio.name,
+              ),
+              centerTitle: true,
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.purple, Colors.blue],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(80),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child:
+                    Container(
+                      height: 50,
+                      child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          itemBuilder: (contex, index){
+                            return ElevatedButton(
+                              onPressed: (){
+                                onTapPage(index);
+                                setState(() {
+                                  _selectedPregunta = index;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: _selectedPregunta == index ? Colors.orange.shade300 : Colors.white,
+                                shape: CircleBorder(),
+                              ),
+                              child:
+                                Text(
+                                    (index+1).toString(),
+                                  style: TextStyle(color: Colors.black, fontSize: 22),
+                                )
+                            );
+                          },
+                          separatorBuilder: (context, index)=> Container(width: 16,),
+                          itemCount: _preguntes.length)
+                    )
+                ),
+              ),
+            ),
+
             body: PageView.builder(
+              onPageChanged: (page){
+                setState(() {
+                  _selectedPregunta = page.toInt();
+                });
+              },
               controller: _controller,
               itemCount: _preguntes.length,
               itemBuilder: (context, index){
@@ -70,16 +127,17 @@ class _QuestionWidgetState extends State<QuestionWidget>{
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 32,),
+              SizedBox(height: 15 ),
               Text(
                 pregunta.enunciat,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8,),
+              SizedBox(height: 10,),
               Text(
                 'Escull una sola opció.',
                 style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
               ),
+              SizedBox(height: 10,),
               Expanded(
                 child: buildOptions(pregunta: pregunta),
               )
