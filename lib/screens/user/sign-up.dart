@@ -287,7 +287,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
   }
 
   Future<void> getEmpreses() async{
-    final response = await http.get(new Uri.http('10.0.2.2:8000', "/api/empreses/"));
+    final response = await http.get(new Uri.http('10.0.2.2:8000', "/api/authentication/empreses/"));
     var data = jsonDecode(response.body);
     _list_empreses = EmpresaList.fromJson(data['results']);
     setState(() {
@@ -297,7 +297,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
 
   Future<void> signUp() async{
     print(_controllerEmpresa.text);
-    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/signup/"),
+    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/authentication/signup/"),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -321,7 +321,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
   }
 
   Future<void> login(String email, String password) async{
-    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/login/"),
+    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/authentication/login/"),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
