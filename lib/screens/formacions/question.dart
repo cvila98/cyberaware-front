@@ -27,7 +27,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   var _responseCode;
   String _hint = "";
-  bool _isCorrect = false;
+  int _puntuacio = 0;
   List<int> _correctAnwer = [];
   Resposta _selectedResposta;
   List<Resposta> array_respostes;
@@ -45,7 +45,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   void initState() {
     _pageIndex = 0;
     _controller = PageController(initialPage: 0, keepPage: false);
-    _isCorrect = false;
+    _puntuacio = 0;
     _selectedResposta = new Resposta(id: 20000, text: 'resposta prova');
     _have_preguntes = get_preguntes(widget.formacio.id).whenComplete((){
       _correctAnwer = new List.filled(_preguntes.length, 0);
@@ -158,7 +158,17 @@ class _QuestionWidgetState extends State<QuestionWidget>{
                   height: 40,
                   width: 200,
                   child: ElevatedButton(
-                      child: Icon(Icons.arrow_forward)
+                    onPressed: (){
+                      if (index_pregunta == _preguntes.length-1){
+                        print(_puntuacio);
+                      }else{
+                        onTapPage(index_pregunta+1);
+                        setState(() {
+                          _selectedPregunta = index_pregunta+1;
+                        });
+                      }
+                    },
+                    child: (index_pregunta == _preguntes.length-1) ? Text('Envia') : Icon(Icons.arrow_forward),
                   ),
                 )
               ) : Container()
@@ -295,7 +305,9 @@ class _QuestionWidgetState extends State<QuestionWidget>{
     _responseCode = response.statusCode;
     var data = jsonDecode(utf8.decode(response.bodyBytes));
     _hint = data['hint'];
-    _isCorrect = data['is_correct'];
+    if(data['is_correct']){
+      _puntuacio += 1;
+    }
   }
 
   Future<void> get_correcta(int id_pregunta, int index) async{
