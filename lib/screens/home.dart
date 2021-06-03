@@ -26,6 +26,12 @@ class _HomeState extends State<Home> {
   int _puntuacio = 0, _max_puntuacio = 0, _realitzades= 0, _totals = 0;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    _puntuacio = _max_puntuacio = _realitzades = _totals = 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     return FutureBuilder<void>(
