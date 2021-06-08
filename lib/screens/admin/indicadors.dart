@@ -60,32 +60,41 @@ class _IndicadorsState extends State<IndicadorsAdmin> {
               ListView(
                 padding: EdgeInsets.all(20),
                 children: [
-                  Text('Indicadors dels últims 7 dies:',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
-                  SizedBox(height: 20),
-                  Container(
-                      padding: EdgeInsets.all(20),
-                      height: 150,
-                      width: 400,
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlueAccent.shade100,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Column(
-                        children: [
-                          Text('Nombre d\'usuaris:',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
-                          SizedBox(height:20),
-                          Text(_num_usuaris.toString()+" usuaris",
-                            style: TextStyle(fontSize: 30,),),
-                        ],
-                      )
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                        padding: EdgeInsets.all(20),
+                        height: 130,
+                        width: 250,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          children: [
+                            Text('Nombre d\'usuaris:',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                            SizedBox(height:20),
+                            Text(_num_usuaris.toString()+" usuaris",
+                              style: TextStyle(fontSize: 30,),),
+                          ],
+                        )
+                    ),
                   ),
+                  Divider(
+                    thickness: 2,
+                    height: 60,),
+                  Text('Indicadors dels últims 7 dies:',
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,),
+                  SizedBox(height: 10),
+                  Text('Aquests indicadors corresponen a la suma de tots els usuaris de l\'empresa, inclós l\'administrador.',
+                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,),
                   SizedBox(height: 20),
                   Container(
                       padding: EdgeInsets.all(20),
                       height: 150,
-                      width: 400,
                       decoration: BoxDecoration(
                         color: Colors.lightBlueAccent.shade100,
                         borderRadius: BorderRadius.circular(15),
@@ -97,6 +106,10 @@ class _IndicadorsState extends State<IndicadorsAdmin> {
                           SizedBox(height:20),
                           Text(_puntuacio_actual.toString()+" / "+_max_puntuacio_actual.toString(),
                             style: TextStyle(fontSize: 30,),),
+                          SizedBox(height: 10),
+                          Text('puntuació obtinguda / puntuació màxima',
+                            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                            textAlign: TextAlign.center,),
                         ],
                       )
                   ),
@@ -104,7 +117,6 @@ class _IndicadorsState extends State<IndicadorsAdmin> {
                   Container(
                       padding: EdgeInsets.all(20),
                       height: 150,
-                      width: 400,
                       decoration: BoxDecoration(
                         color: Colors.lightBlueAccent.shade100,
                         borderRadius: BorderRadius.circular(15),
@@ -118,6 +130,57 @@ class _IndicadorsState extends State<IndicadorsAdmin> {
                             style: TextStyle(fontSize: 30,),),
                           Text(_pendents.toString()+" pendents",
                               style: TextStyle(fontSize: 30,)),
+                        ],
+                      )
+                  ),
+                  Divider(
+                    thickness: 2,
+                    height: 60,),
+                  Text('Indicadors totals: ',
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text('Aquests indicadors corresponen l\'activitat des de l\'inscripció de l\'empresa fins ara.',
+                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                    textAlign: TextAlign.center,),
+                  SizedBox(height: 20),
+                  Container(
+                      padding: EdgeInsets.all(20),
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.lightBlueAccent.shade100,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        children: [
+                          Text('Puntuació dels usuaris:',
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                          SizedBox(height:20),
+                          Text(_puntuacio_acumulada.toString()+" / "+_max_puntuacio_acumulada.toString(),
+                            style: TextStyle(fontSize: 30,),),
+                          SizedBox(height: 10),
+                          Text('puntuació obtinguda / puntuació màxima',
+                            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                            textAlign: TextAlign.center,),
+                        ],
+                      )
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                      padding: EdgeInsets.all(20),
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.lightBlueAccent.shade100,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        children: [
+                          Text('Formacions dels usuaris:',
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                          SizedBox(height:10),
+                          Text(_acumulades.toString()+" realitzades",
+                            style: TextStyle(fontSize: 30,),),
                         ],
                       )
                   )
