@@ -1,4 +1,5 @@
 import 'package:cyberaware/models/Usuari.dart';
+import 'package:cyberaware/screens/menu/menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -8,30 +9,30 @@ import 'dart:core';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
-import 'menu/menu.dart';
-
-class Home extends StatefulWidget {
-  Home(this.user);
+class IndicadorsAdmin extends StatefulWidget {
+  IndicadorsAdmin(this.user);
   Usuari user;
 
   static const String _title = 'CyberAware';
   @override
-  _HomeState createState() => _HomeState();
+  _IndicadorsState createState() => _IndicadorsState();
 
 
 }
 
-class _HomeState extends State<Home> {
+class _IndicadorsState extends State<IndicadorsAdmin> {
 
-  int _puntuacio = 0, _max_puntuacio = 0, _realitzades= 0, _pendents = 0;
-  int _puntuacio_acumulada = 0, _max_puntuacio_acumulada = 0, _acumulades = 0;
+  int _puntuacio_actual = 0, _max_puntuacio_actual = 0, _puntuacio_acumulada= 0, _max_puntuacio_acumulada = 0;
+  int _realitzades= 0, _pendents = 0, _acumulades = 0, _num_usuaris = 0;
+
   Future<void> _have_metrics;
 
   @override
   void initState() {
-    _puntuacio = _max_puntuacio = _realitzades = _pendents = 0;
-    _puntuacio_acumulada = _max_puntuacio_acumulada = _acumulades = 0;
-    _have_metrics = get_metrics();
+    _puntuacio_actual = _max_puntuacio_actual = _puntuacio_acumulada= _max_puntuacio_acumulada = 0;
+    _realitzades = _pendents = _acumulades = _num_usuaris = 0;
+    _have_metrics = get_puntuacions().whenComplete(() => get_formacions());
+
   }
 
   @override
@@ -44,7 +45,7 @@ class _HomeState extends State<Home> {
               drawer: Menu(widget.user),
               appBar: AppBar(
                 title: Text(
-                  'Indicadors usuari',
+                  'Indicadors administrador',
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -59,46 +60,70 @@ class _HomeState extends State<Home> {
               ListView(
                 padding: EdgeInsets.all(20),
                 children: [
-                  Text('Indicadors dels últims 7 dies:',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
-                  SizedBox(height: 20),
                   Align(
                     alignment: Alignment.center,
                     child: Container(
                         padding: EdgeInsets.all(20),
-                        height: 150,
-                        width: 400,
+                        height: 130,
+                        width: 250,
                         decoration: BoxDecoration(
-                          color: Colors.lightBlueAccent.shade100,
+                          color: Colors.blue.shade100,
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Column(
                           children: [
-                            Text('Puntuació:',
+                            Text('Nombre d\'usuaris:',
                               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
                             SizedBox(height:20),
-                            Text(_puntuacio.toString()+" / "+_max_puntuacio.toString(),
+                            Text(_num_usuaris.toString()+" usuaris",
                               style: TextStyle(fontSize: 30,),),
-                            SizedBox(height: 10),
-                            Text('puntuació obtinguda / puntuació màxima',
-                              style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                              textAlign: TextAlign.center,),
                           ],
                         )
                     ),
                   ),
+                  Divider(
+                    thickness: 2,
+                    height: 60,),
+                  Text('Indicadors dels últims 7 dies:',
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,),
+                  SizedBox(height: 10),
+                  Text('Aquests indicadors corresponen a la suma de tots els usuaris de l\'empresa, inclós l\'administrador.',
+                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,),
                   SizedBox(height: 20),
                   Container(
                       padding: EdgeInsets.all(20),
                       height: 150,
-                      width: 400,
                       decoration: BoxDecoration(
                         color: Colors.lightBlueAccent.shade100,
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Column(
                         children: [
-                          Text('Formacions:',
+                          Text('Puntuació dels usuaris:',
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                          SizedBox(height:20),
+                          Text(_puntuacio_actual.toString()+" / "+_max_puntuacio_actual.toString(),
+                            style: TextStyle(fontSize: 30,),),
+                          SizedBox(height: 10),
+                          Text('puntuació obtinguda / puntuació màxima',
+                            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                            textAlign: TextAlign.center,),
+                        ],
+                      )
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                      padding: EdgeInsets.all(20),
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.lightBlueAccent.shade100,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        children: [
+                          Text('Formacions dels usuaris:',
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
                           SizedBox(height:10),
                           Text(_realitzades.toString()+" realitzades",
@@ -116,7 +141,7 @@ class _HomeState extends State<Home> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 10),
-                  Text('Aquests indicadors corresponen l\'activitat des de l\'inscripció de l\'usuari fins ara.',
+                  Text('Aquests indicadors corresponen l\'activitat des de l\'inscripció de l\'empresa fins ara.',
                     style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                     textAlign: TextAlign.center,),
                   SizedBox(height: 20),
@@ -129,7 +154,7 @@ class _HomeState extends State<Home> {
                       ),
                       child: Column(
                         children: [
-                          Text('Puntuació acumulada:',
+                          Text('Puntuació dels usuaris:',
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
                           SizedBox(height:20),
                           Text(_puntuacio_acumulada.toString()+" / "+_max_puntuacio_acumulada.toString(),
@@ -151,7 +176,7 @@ class _HomeState extends State<Home> {
                       ),
                       child: Column(
                         children: [
-                          Text('Formacions acumulades:',
+                          Text('Formacions dels usuaris:',
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
                           SizedBox(height:10),
                           Text(_acumulades.toString()+" realitzades",
@@ -167,20 +192,30 @@ class _HomeState extends State<Home> {
 
   }
 
-  Future<void> get_metrics() async{
-    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/authentication/get_puntuacio"),
+  Future<void> get_puntuacions() async{
+    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/admin/puntuacions/"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         'Authorization': "Token "+widget.user.token.toString(),
       },);
     var data = jsonDecode(utf8.decode(response.bodyBytes));
-    _puntuacio = data['puntuacio'];
-    _max_puntuacio = data['max_puntuacio'];
+    _puntuacio_actual = data['puntuacio_actual'];
+    _max_puntuacio_actual = data['max_puntuacio_actual'];
     _puntuacio_acumulada = data['puntuacio_acumulada'];
     _max_puntuacio_acumulada = data['max_puntuacio_acumulada'];
+  }
+
+  Future<void> get_formacions() async{
+    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/admin/formacions"),
+      headers: <String, String>{
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+        'Authorization': "Token "+widget.user.token.toString(),
+      },);
+    var data = jsonDecode(utf8.decode(response.bodyBytes));
+    _acumulades = data['formacions_acumulades'];
     _realitzades = data['formacions_realitzades'];
     _pendents = data['formacions_pendents'];
-    _acumulades = data['formacions_acumulades'];
+    _num_usuaris = data['usuaris'];
   }
 
 }
