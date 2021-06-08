@@ -23,25 +23,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  int _puntuacio = 0, _max_puntuacio = 0, _realitzades= 0, _totals = 0;
+  int _puntuacio = 0, _max_puntuacio = 0, _realitzades= 0, _pendents = 0;
+  Future<void> _have_metrics;
 
   @override
   void initState() {
-    // TODO: implement initState
-    _puntuacio = _max_puntuacio = _realitzades = _totals = 0;
+    _puntuacio = _max_puntuacio = _realitzades = _pendents = 0;
+    _have_metrics = get_metrics();
   }
 
   @override
   Widget build(BuildContext context) {
 
     return FutureBuilder<void>(
-        future: get_metrics(),
+        future: _have_metrics,
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           return Scaffold(
               drawer: Menu(widget.user),
               appBar: AppBar(
                 title: Text(
-                  'Inici',
+                  'Indicadors usuari',
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -53,52 +54,53 @@ class _HomeState extends State<Home> {
                 centerTitle: true,
               ),
               body:
-              Padding(
+              ListView(
                 padding: EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Container(
-                        padding: EdgeInsets.all(20),
-                        height: 150,
-                        width: 400,
-                        decoration: BoxDecoration(
-                          color: Colors.lightBlueAccent.shade100,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Column(
-                          children: [
-                            Text('Puntuació:',
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
-                            SizedBox(height:20),
-                            Text(_puntuacio.toString()+" / "+_max_puntuacio.toString(),
+                children: [
+                  Text('Indicadors dels últims 7 dies:',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
+                  SizedBox(height: 20),
+                  Container(
+                      padding: EdgeInsets.all(20),
+                      height: 150,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        color: Colors.lightBlueAccent.shade100,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        children: [
+                          Text('Puntuació:',
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                          SizedBox(height:20),
+                          Text(_puntuacio.toString()+" / "+_max_puntuacio.toString(),
+                          style: TextStyle(fontSize: 30,),),
+                        ],
+                      )
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                      padding: EdgeInsets.all(20),
+                      height: 150,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        color: Colors.lightBlueAccent.shade100,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        children: [
+                          Text('Formacions:',
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                          SizedBox(height:10),
+                          Text(_realitzades.toString()+" realitzades",
                             style: TextStyle(fontSize: 30,),),
-                          ],
-                        )
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                        padding: EdgeInsets.all(20),
-                        height: 150,
-                        width: 400,
-                        decoration: BoxDecoration(
-                          color: Colors.lightBlueAccent.shade100,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Column(
-                          children: [
-                            Text('Formacions:',
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
-                            SizedBox(height:10),
-                            Text(_realitzades.toString()+" realitzades ",
-                              style: TextStyle(fontSize: 30,),),
-                            Text((_totals-_realitzades).toString()+" pendents",
-                                style: TextStyle(fontSize: 30,)),
-                          ],
-                        )
-                    )
-                  ],
-                ),
-              )
+                          Text(_pendents.toString()+" pendents",
+                              style: TextStyle(fontSize: 30,)),
+                        ],
+                      )
+                  )
+                ],
+              ),
           );
         }
     );
@@ -115,7 +117,7 @@ class _HomeState extends State<Home> {
     _puntuacio = data['puntuacio'];
     _max_puntuacio = data['max_puntuacio'];
     _realitzades = data['formacions_realitzades'];
-    _totals = data['formacions'];
+    _pendents = data['formacions_pendents'];
   }
 
 }

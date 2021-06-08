@@ -1,4 +1,5 @@
 import 'package:cyberaware/models/Usuari.dart';
+import 'package:cyberaware/screens/admin/indicadors.dart';
 import 'package:cyberaware/screens/formacions/formacions.dart';
 import 'package:cyberaware/screens/user/login.dart';
 import 'package:cyberaware/screens/user/profile.dart';
@@ -44,6 +45,14 @@ class _MenuContent extends State<Menu> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Formacions(widget.user))
+
+    );
+  }
+
+  nIndicadorsAdmin() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => IndicadorsAdmin(widget.user))
 
     );
   }
@@ -98,17 +107,30 @@ class _MenuContent extends State<Menu> {
             onTap: () => nProfile(),
           ),
           ListTile(
-            leading: Icon(Icons.view_list_outlined),
+            leading: Icon(Icons.assignment_turned_in),
             title: Text(
                 'Formacions'),
             onTap: () => nFormacions(),
           ),
+          widget.user.is_admin ? ListTile(
+            leading: Icon(Icons.view_list_outlined),
+            title: Text('Indicadors Admin',
+                ),
+            onTap: () => nIndicadorsAdmin(),
+          ) :
           ListTile(
             leading: Icon(Icons.exit_to_app, color: Colors.redAccent),
             title: Text('Logout',
                 style: TextStyle(color: Colors.redAccent)),
             onTap: () => nLogIn(),
           ),
+          widget.user.is_admin ?
+          ListTile(
+            leading: Icon(Icons.exit_to_app, color: Colors.redAccent),
+            title: Text('Logout',
+                style: TextStyle(color: Colors.redAccent)),
+            onTap: () => nLogIn(),
+          ) : ListTile(),
 
         ],
       ),

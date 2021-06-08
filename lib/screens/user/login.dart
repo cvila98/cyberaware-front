@@ -199,8 +199,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
     var data = jsonDecode(response.body);
     user = Usuari.fromJson(data['user']);
     user.token = data['access_token'];
-    print(user.token);
-    print(user.email);
+    print(user.is_admin);
   }
 
 }

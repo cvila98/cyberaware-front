@@ -34,7 +34,7 @@ class Usuari {
         username: json['username'],
         email: json['email'],
         name: json['name'],
-        admin: json['is_admin'],
+        admin: json['if_admin'],
         name_empresa: json['empresa'],
     );
   }
