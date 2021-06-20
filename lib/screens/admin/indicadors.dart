@@ -193,7 +193,7 @@ class _IndicadorsState extends State<IndicadorsAdmin> {
   }
 
   Future<void> get_puntuacions() async{
-    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/admin/puntuacions/"),
+    http.Response response = await http.get(new Uri.http("cyberaware.pythonanywhere.com", "/api/admin/puntuacions/"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         'Authorization': "Token "+widget.user.token.toString(),
@@ -206,7 +206,7 @@ class _IndicadorsState extends State<IndicadorsAdmin> {
   }
 
   Future<void> get_formacions() async{
-    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/admin/formacions"),
+    http.Response response = await http.get(new Uri.http("cyberaware.pythonanywhere.com", "/api/admin/formacions"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         'Authorization': "Token "+widget.user.token.toString(),

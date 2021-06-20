@@ -150,7 +150,7 @@ class _ProfileState extends State<Profile>{
   }
 
   Future<void> update(String name) async{
-    http.Response response = await http.patch(new Uri.http("10.0.2.2:8000", "/api/authentication/update_profile/"),
+    http.Response response = await http.patch(new Uri.http("cyberaware.pythonanywhere.com", "/api/authentication/update_profile/"),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
           HttpHeaders.authorizationHeader: "Token " + widget.user.token.toString(),

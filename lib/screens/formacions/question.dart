@@ -220,7 +220,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
 
   Future<void> get_preguntes(int id_formacio) async{
     print('entro al get preguntes');
-    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/formacions/"+id_formacio.toString()+"/preguntes/"),
+    http.Response response = await http.get(new Uri.http("cyberaware.pythonanywhere.com", "/api/formacions/"+id_formacio.toString()+"/preguntes/"),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
           'Authorization': "Token "+widget.user.token.toString(),
@@ -329,8 +329,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   }
 
   Future<void> check_resposta(int id_resposta, int id_pregunta) async {
-    print('entro al check_resposta');
-    http.Response response = await http.post(new Uri.http("10.0.2.2:8000",
+    http.Response response = await http.post(new Uri.http("cyberaware.pythonanywhere.com",
         "/api/formacions/preguntes/" + id_pregunta.toString() + "/"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
@@ -349,7 +348,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   }
 
   Future<void> get_correcta(int id_pregunta, int index) async{
-    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/formacions/pregunta/"+id_pregunta.toString()+"/get_correcta"),
+    http.Response response = await http.get(new Uri.http("cyberaware.pythonanywhere.com", "/api/formacions/pregunta/"+id_pregunta.toString()+"/get_correcta"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         'Authorization': "Token "+widget.user.token.toString(),
@@ -364,8 +363,7 @@ class _QuestionWidgetState extends State<QuestionWidget>{
   Future<void> submit_resposta() async {
     DateTime datetime = DateTime.now();
     DateTime date = DateTime(datetime.year, datetime.month, datetime.day);
-    print(date.toString().substring(0,10));
-    http.Response response = await http.post(new Uri.http("10.0.2.2:8000",
+    http.Response response = await http.post(new Uri.http("cyberaware.pythonanywhere.com",
         "/api/formacions/"+ widget.formacio.id.toString() + "/submit/"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',

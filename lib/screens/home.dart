@@ -168,7 +168,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> get_metrics() async{
-    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/authentication/get_puntuacio"),
+    http.Response response = await http.get(new Uri.http("cyberaware.pythonanywhere.com", "/api/authentication/get_puntuacio"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         'Authorization': "Token "+widget.user.token.toString(),

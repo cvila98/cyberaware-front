@@ -241,7 +241,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
                     );
                   }).toList(),
                   onChanged: (value){
-                    print(value);
                     setState(() {
                       _controllerEmpresa.text = value;
                     });
@@ -287,7 +286,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
   }
 
   Future<void> getEmpreses() async{
-    final response = await http.get(new Uri.http('10.0.2.2:8000', "/api/authentication/empreses/"));
+    final response = await http.get(new Uri.http('cyberaware.pythonanywhere.com', "/api/authentication/empreses/"));
     var data = jsonDecode(response.body);
     _list_empreses = EmpresaList.fromJson(data['results']);
     setState(() {
@@ -296,8 +295,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
   }
 
   Future<void> signUp() async{
-    print(_controllerEmpresa.text);
-    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/authentication/signup/"),
+    http.Response response = await http.post(new Uri.http("cyberaware.pythonanywhere.com", "/api/authentication/signup/"),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -310,7 +308,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
           'empresa': _controllerEmpresa.text,
         }));
     _responseCode = response.statusCode;
-    print(response.body);
+    print(_responseCode);
     if (_responseCode != 201){
       Map<String, dynamic> data = jsonDecode(response.body);
       responseError=[];
@@ -321,7 +319,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>{
   }
 
   Future<void> login(String email, String password) async{
-    http.Response response = await http.post(new Uri.http("10.0.2.2:8000", "/api/authentication/login/"),
+    http.Response response = await http.post(new Uri.http("cyberaware.pythonanywhere.com", "/api/authentication/login/"),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },

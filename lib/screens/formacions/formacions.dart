@@ -128,7 +128,7 @@ class _FormacionsState extends State<Formacions> {
   }
 
   Future<void> get_formacions() async{
-    http.Response response = await http.get(new Uri.http("10.0.2.2:8000", "/api/formacions/formacions_user"),
+    http.Response response = await http.get(new Uri.http("cyberaware.pythonanywhere.com", "/api/formacions/formacions_user"),
       headers: <String, String>{
         HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         'Authorization': "Token "+widget.user.token,
